@@ -34,7 +34,9 @@ reason gets argued again. If there were no decisions, do not invent one.
 stay true, create or update `memory/knowledge/<topic>.md` with the header described in that folder's
 README. If a file on the topic exists, update it and its `last_verified` date; do not create a parallel
 one. Do not copy state that expires (counts, versions, "today"): if a number matters, it goes with its
-date, or better, with how to reproduce it.
+date, or better, with how to reproduce it. If a knowledge file was used during the session and turned
+out to be still true, update its `last_verified` date too: that is how memory gets verified, not only
+written.
 
 **6. LAST.md.** `memory/LAST.md` holds one section per recent session, newest first:
 
@@ -68,3 +70,7 @@ what still has to leave · next step.
   invented close is worse than none, because the next session believes it.
 - It does not skip step 2 when nothing was parked: saying so is also information.
 - It does not edit CLAUDE.md. If something there should change, it proposes the change and waits.
+
+---
+
+Part of [Exo-cortex](https://github.com/Eutree/Exo-cortex) (Sánchez, 2026, https://doi.org/10.5281/zenodo.22714567) · CC BY 4.0

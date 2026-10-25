@@ -43,3 +43,7 @@ declared.
 - It does not invent: if no file says it, it is not asserted.
 - It does not replace reading the file: the trail is for choosing what to read.
 - It does not search outside the folder unless CLAUDE.md declares another place.
+
+---
+
+Part of [Exo-cortex](https://github.com/Eutree/Exo-cortex) (Sánchez, 2026, https://doi.org/10.5281/zenodo.22714567) · CC BY 4.0

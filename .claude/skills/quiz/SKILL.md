@@ -1,6 +1,6 @@
 ---
 name: quiz
-description: Monthly memory quiz. Ten yes/no or multiple-choice questions, sampled at random by tools/quiz.py from last month's decisions, learnings and knowledge, that the user answers without looking at the folder; grades them, records the result in memory/checks/ and says what to re-read. Use when the user types /quiz, says "monthly quiz", "test my memory", or when LAST.md or a reminder says the month's quiz is due.
+description: Monthly memory quiz and memory health check. Ten yes/no or multiple-choice questions, sampled at random by tools/quiz.py from last month's decisions, learnings and knowledge, that the user answers without looking at the folder; grades them, records the result in memory/checks/, says what to re-read, then runs tools/memory_check.py and proposes what to verify, merge or prune. Use when the user types /quiz, says "monthly quiz", "test my memory", or when LAST.md or a reminder says the month's quiz is due.
 ---
 
 # /quiz: what lives in you and what only lives here
@@ -33,11 +33,26 @@ Do not show the source or the item text.
 "reading"}` where `reading` is two or three lines: which kind of item was missed and what that
 suggests. Then run `python tools/quiz.py --record <file>`.
 
-**5. Close.** Show the score, the previous month's score if there is one, and the list of files to
+**5. Score.** Show the score, the previous month's score if there is one, and the list of files to
 re-read. Missed items come back next month automatically.
+
+**6. Memory health.** Run `python tools/memory_check.py` and show what it found. For each finding,
+propose one fix and wait for the user's decision on each:
+- **stale knowledge**: re-check it now and update `last_verified`, rewrite it, or drop it;
+- **possible duplicates**: merge into one file (the other one is deleted only with the user's OK);
+- **decisions without a reason**: ask for the reason; **rows without a date**: fix the date;
+- **incomplete headers and logs without description**: write the missing line;
+- **automatic memory of Claude Code**: for each file worth keeping, move its content to
+  `memory/knowledge/`; leave the rest.
+Apply only what the user approves. Pruning is the user's call: you propose, they decide. If the check
+found nothing, say so in one line.
 
 ## What this routine does not do
 
 - It does not let the user look up answers during the quiz, and it does not reveal them before the
   end.
 - It does not soften the score. The number is only useful if it is honest.
+
+---
+
+Part of [Exo-cortex](https://github.com/Eutree/Exo-cortex) (Sánchez, 2026, https://doi.org/10.5281/zenodo.22714567) · CC BY 4.0

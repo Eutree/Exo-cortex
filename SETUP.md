@@ -27,6 +27,7 @@ When the interview is done:
 - Write CLAUDE.md in my language and with my words, with the sections: Who I am · How to work with
   me · Autonomy · My tools and places · Vocabulary · Session protocol.
 - Copy the "Session protocol" section exactly as it is in the current template: it is the method.
+- Keep the "Based on Exo-cortex" line under the title as it is: it says where the method comes from.
 - Do not invent anything I did not say. What I do not know yet stays as "to be completed" in one line.
 - Show me the whole file before saving it and wait for my approval.
 - After saving it, replace the setup section of memory/LAST.md with today's date, "setup done" as the

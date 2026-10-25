@@ -16,7 +16,7 @@ scripts (standard library only) add the measurements.
 | Property of a regulator | Where it lives here |
 |---|---|
 | Declared autonomy: nothing irreversible without you | The autonomy table and rules in [`CLAUDE.md`](CLAUDE.md) |
-| Curated memory with explicit write rights | Four territories (who you are · what you know · what happened · what we know), each with who may write it |
+| Curated memory with explicit write rights | Four territories (who you are · what you know · what happened · what we know), each with who may write it, and a monthly health check (see [How memory is managed](#how-memory-is-managed)) |
 | Verification as a first-class function | A five-line contract at the start of every session, checked by `/close` |
 | Measuring what the human stops knowing | `/quiz`: ten questions a month about last month's memory, answered without the folder |
 | Measuring whether the protocol is followed | `tools/convergence.py`: how many sessions close, how many drag on for days |
@@ -42,7 +42,40 @@ The next time you open Claude Code in the folder, it starts by telling you where
 | Opening a session | nothing | Claude reads `memory/LAST.md`, says where you left off and proposes the session contract |
 | Looking for something already discussed | `/recall <topic>` | Searches all the memory and says where each match came from, and where it looked |
 | Closing a session | `/close` | Writes the log, decisions with their reasons, learnings, and where you left off. **The only mandatory step** |
-| Once a month | `/quiz` | Ten questions about last month, answered without the folder; the score is recorded |
+| Once a month | `/quiz` | Ten questions about last month, answered without the folder; the score is recorded, then a memory health check |
+
+## How memory is managed
+
+Memory here is curated, not accumulated: it has a life cycle, and every step has an owner.
+
+| Step | When | Who | How |
+|---|---|---|---|
+| **Write** | At the end of every session | Claude, through `/close` | The session log, decisions with their reason, learnings into knowledge, and where you left off |
+| **Read** | When a session opens, and on demand | Claude | `memory/LAST.md` first; `/recall` searches everything and says where it looked |
+| **Verify** | Whenever a knowledge file is used and is still true | Claude, at `/close` | Updates the file's `last_verified` date, so "still true" is a dated claim |
+| **Prune** | Once a month, with `/quiz` | Claude proposes, you decide | `tools/memory_check.py` lists what is stale, duplicated or incomplete |
+
+Three rules keep it healthy:
+
+- **One topic, one file.** Knowledge is updated in place, never written twice.
+- **No copied state.** A count, a version or a "today" expires on its own and is later read as current:
+  it goes with its date, or better, with how to reproduce it.
+- **Identity is yours.** `CLAUDE.md` changes only with your approval.
+
+The health check only reads. It flags:
+
+- knowledge not verified in 90 days;
+- headers that `/recall` and `/quiz` cannot read;
+- two files that look like one topic;
+- decisions with no reason, or with a date the quiz cannot parse;
+- logs with no description;
+- old sections left in `LAST.md`.
+
+None of these raises an error on its own; they just make search and recall quietly worse.
+
+Claude Code also keeps an automatic memory of its own for each folder. The system writes it and nobody
+curates it, so treat it as an inbox. The health check shows what is in it, and what matters moves to
+`memory/knowledge/`.
 
 ## Measuring
 
@@ -50,6 +83,7 @@ The next time you open Claude Code in the folder, it starts by telling you where
 python tools/convergence.py          # sessions in this folder: closed with /close, multi-day, per day
 python tools/quiz.py --candidates    # how much memory the next quiz can draw from
 python tools/quiz.py --history       # quiz scores, month by month
+python tools/memory_check.py         # memory health: stale, duplicated, incomplete (read-only)
 ```
 
 To have Claude propose closing when a long session has not closed, copy
@@ -72,7 +106,7 @@ memory/
   knowledge/              what stays true (T2)
   checks/                 monthly quiz results
 .claude/skills/           close · recall · quiz
-tools/                    transcripts.py · convergence.py · quiz.py
+tools/                    transcripts.py · convergence.py · quiz.py · memory_check.py
 tests/                    python -m pytest tests
 ```
 

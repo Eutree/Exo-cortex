@@ -62,3 +62,9 @@ think, and a measure of how much of that thinking is still yours.
 
 If after three weeks the folder looks like the first day, the folder did not fail: the habit asked
 for more than you wanted to put in, and that is also information.
+
+---
+
+This method is described in Sánchez, R. I. (2026), *Exocortex: an operational definition and minimal
+architecture for a governed cognitive regulator*, Zenodo, https://doi.org/10.5281/zenodo.22714567.
+Text under CC BY 4.0: if you share or adapt it, credit the source.

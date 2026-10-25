@@ -8,6 +8,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "tools"))
 import convergence  # noqa: E402
+import memory_check  # noqa: E402
 import quiz  # noqa: E402
 import transcripts  # noqa: E402
 
@@ -151,3 +152,53 @@ def test_quiz_record_brings_back_misses(tmp_path, monkeypatch):
     assert out.is_file() and "9/10" in out.read_text(encoding="utf-8")
     nxt, _ = quiz.select("2026-10", since, until)
     assert any(x.get("repeat") and x["id"] == items[0]["id"] for x in nxt)
+
+
+def test_memory_check_finds_each_problem(tmp_path, monkeypatch):
+    monkeypatch.setenv("CLAUDE_CONFIG_DIR", str(tmp_path / "cfg"))
+    root = tmp_path / "proj"
+    mem = root / "memory"
+    (mem / "knowledge").mkdir(parents=True)
+    (mem / "log").mkdir()
+    w = lambda p, t: p.write_text(t, encoding="utf-8")  # noqa: E731
+    w(mem / "knowledge" / "lead-time.md",
+      "---\ndescription: How lead time is computed for imports\nlast_verified: 2026-05-01\n---\n")
+    w(mem / "knowledge" / "lead-time-imports.md",
+      "---\ndescription: Lead time of imports, step by step\nlast_verified: 2026-10-20\n---\n")
+    w(mem / "knowledge" / "no-header.md", "# Just a title\n")
+    w(mem / "knowledge" / "bad-date.md", "---\ndescription: Something useful\nlast_verified: 2026-13-45\n---\n")
+    w(mem / "knowledge" / "README.md", "not a memory")
+    w(mem / "decisions.md", "# Decisions\n\n| Date | Decision | Reason |\n|---|---|---|\n"
+      "| example | x | y |\n| 2026-10-01 | Use X | |\n| 2026-10-02 | Use Y | Because Z is slow |\n"
+      "| 1 Oct | Use W | Because |\n")
+    w(mem / "log" / "2026-10-01-a.md", "---\ndescription: <one line: what was done>\n---\n")
+    w(mem / "log" / "2026-10-02-b.md", "---\ndescription: Did the thing; the report is pending\n---\n")
+    secs = "".join(f"## 2026-10-{d:02d} · t{d}\n**State.** x\n\n" for d in (24, 23, 22, 21, 20, 10, 5))
+    w(mem / "LAST.md", "# Where we left off\n\n" + secs)
+    auto = tmp_path / "cfg" / "projects" / transcripts.slug(str(root)) / "memory"
+    auto.mkdir(parents=True)
+    w(auto / "MEMORY.md", "index")
+    w(auto / "user_role.md", "x")
+
+    r = memory_check.check(root, date(2026, 10, 25))
+    assert [x["file"] for x in r["stale"]] == ["memory/knowledge/lead-time.md"]
+    assert {(x["file"], x["field"]) for x in r["incomplete"]} == {
+        ("memory/knowledge/no-header.md", "description"), ("memory/knowledge/no-header.md", "last_verified"),
+        ("memory/knowledge/bad-date.md", "last_verified")}
+    assert [x["files"] for x in r["duplicates"]] == [["memory/knowledge/lead-time-imports.md",
+                                                      "memory/knowledge/lead-time.md"]]
+    assert [x["line"] for x in r["decisions_no_reason"]] == [6]
+    assert [x["line"] for x in r["decisions_no_date"]] == [8]
+    assert r["logs_no_description"] == ["memory/log/2026-10-01-a.md"]
+    assert r["last_old_sections"] == 2
+    assert r["auto_memory"]["files"] == 1 and r["auto_memory"]["newest"] == ["user_role.md"]
+    assert "things to look at" in memory_check.report(r, root)
+
+
+def test_memory_check_clean_and_empty_folders(tmp_path, monkeypatch):
+    monkeypatch.setenv("CLAUDE_CONFIG_DIR", str(tmp_path / "cfg"))
+    r = memory_check.check(tmp_path / "nothing-here", date(2026, 10, 25))
+    assert memory_check.report(r, tmp_path).endswith("Nothing to fix.")
+    shipped = memory_check.check(memory_check.ROOT, date(2026, 10, 25))
+    assert not any(shipped[k] for k in ("stale", "incomplete", "duplicates", "decisions_no_reason",
+                                         "decisions_no_date", "logs_no_description", "last_old_sections"))
