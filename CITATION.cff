@@ -1,0 +1,28 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it, and the definition it implements, as below."
+title: "Exo-cortex: a reference implementation of a governed cognitive regulator for Claude Code"
+version: 0.1.0
+license: MIT
+repository-code: "https://github.com/Eutree/Exo-cortex"
+keywords:
+  - exocortex
+  - extended cognition
+  - cognitive offloading
+  - human-AI interaction
+  - AI governance
+  - Claude Code
+authors:
+  - family-names: "Sánchez"
+    given-names: "Rafael Ignacio"
+    orcid: "https://orcid.org/0009-0007-8854-2945"
+    affiliation: "Universidad Argentina de la Empresa (UADE); Blue Star Group"
+references:
+  - type: report
+    title: "Exocortex: an operational definition and minimal architecture for a governed cognitive regulator"
+    authors:
+      - family-names: "Sánchez"
+        given-names: "Rafael Ignacio"
+    year: 2026
+    publisher:
+      name: "Zenodo"
+    doi: "10.5281/zenodo.22714567"
