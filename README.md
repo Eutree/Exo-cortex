@@ -1,5 +1,7 @@
 # Exo-cortex
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23676244.svg)](https://doi.org/10.5281/zenodo.23676244)
+
 **A folder that turns Claude Code into an external regulator of your thinking, not only a memory.**
 
 Claude Code starts every session remembering nothing. Most fixes for that *store*: they keep what was
@@ -131,6 +133,11 @@ If you use or discuss this work, please cite the definition and, if relevant, th
 
 > Sánchez, R. I. (2026). *Exocortex: an operational definition and minimal architecture for a governed
 > cognitive regulator*. Zenodo. https://doi.org/10.5281/zenodo.22714567
+
+> Sánchez, R. I. (2026). *Exo-cortex: a reference implementation of a governed cognitive regulator for
+> Claude Code*. Zenodo. https://doi.org/10.5281/zenodo.23676244
+
+The second DOI always resolves to the latest version of the software; each release also has its own.
 
 Background: Houston, B. (1999), original definition of the term; see
 [Origins of the term "Exocortex"](https://ben3d.ca/blog/origins-of-the-term-exocortex).

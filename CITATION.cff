@@ -3,6 +3,7 @@ message: "If you use this software, please cite it, and the definition it implem
 title: "Exo-cortex: a reference implementation of a governed cognitive regulator for Claude Code"
 version: 0.1.0
 license: MIT
+doi: "10.5281/zenodo.23676244"
 repository-code: "https://github.com/Eutree/Exo-cortex"
 keywords:
   - exocortex
